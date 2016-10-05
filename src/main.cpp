@@ -1,10 +1,44 @@
 #include <iostream>
 #include <sstream>
+#include <string>
+#include <utility>
+#include <vector>
 
-#include "args.hxx"
 #include "Info.h"
+#include "Rule.h"
+#include "Solver.h"
+#include "args.hxx"
 
 using namespace std;
+
+struct RulesReader {
+  void operator()(const std::string &name, const std::string &value,
+      Rule &destination) {
+    vector<string> items;
+    istringstream iss(value);
+
+    for (string token; getline(iss, token, ':'); ) {
+      items.push_back(move(token));
+    }
+
+    int x1(atoi(items[0].c_str()));
+    int y1(atoi(items[1].c_str()));
+    int x2(atoi(items[2].c_str()));
+    int y2(atoi(items[3].c_str()));
+    
+    if ("<" == items[4] || ">" == items[4]) {
+      destination.set(x1, y1, x2, y2, ('>' == *(items[4].c_str())));
+    } else {
+      int diff(atoi(items[4].c_str()));
+      destination.set(x1, y1, x2, y2, diff);
+    }
+  }
+};
+
+ostream& operator<<(ostream& out, const Rule& r) {
+  return out << r.to_string();
+}
+  
 
 int main(int argc, char** argv) {
 
@@ -12,8 +46,12 @@ int main(int argc, char** argv) {
 
   args::ArgumentParser p("This is a skeleton program.");
   args::Flag license(p, "license", "Show the license", {"license"});
-  args::HelpFlag help(p, "help", "Display this help text", {'h', "help"});
+  args::Flag help(p, "help", "Display this help text", {'h', "help"});
   args::Flag version(p, "version", "Show the program version", {"version"});
+  args::ValueFlag<int> size(p, "size", "Set the size of the grid",
+      {'s', "size"}, 6);
+  args::PositionalList<Rule, vector, RulesReader> rules(p, "rules",
+      "The list of constraints/rules");
 
   Info info(prog_name);
 
@@ -33,7 +71,7 @@ int main(int argc, char** argv) {
     info.setHelp(help.str());
     info.showHelp();
     cerr << info.display();
-    return 1;
+    return 0;
   }
 
   bool display = false;
@@ -56,6 +94,20 @@ int main(int argc, char** argv) {
     cout << info.display();
     return 0;
   }
+
+  cout << "Size: " << args::get(size) << endl;
+
+  if (rules) {
+    for (const auto r: args::get(rules)) {
+      cout << r << endl;
+    }
+  }
+
+  int nSize = args::get(size);
+
+  Solver s(nSize, args::get(rules));
+  s.solve();
+  s.print();
 
   return 0;
 
