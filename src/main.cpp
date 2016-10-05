@@ -8,8 +8,11 @@
 #include "Rule.h"
 #include "Solver.h"
 #include "args.hxx"
+#include "data.h"
 
 using namespace std;
+
+DATA_FILE(description)
 
 struct RulesReader {
   void operator()(const std::string &name, const std::string &value,
@@ -44,7 +47,9 @@ int main(int argc, char** argv) {
 
   string prog_name = "fmps";
 
-  args::ArgumentParser p("This is a skeleton program.");
+  string description(&description_begin);
+
+  args::ArgumentParser p(description);
   args::Flag license(p, "license", "Show the license", {"license"});
   args::Flag help(p, "help", "Display this help text", {'h', "help"});
   args::Flag version(p, "version", "Show the program version", {"version"});

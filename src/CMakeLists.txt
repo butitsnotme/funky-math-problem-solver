@@ -10,9 +10,9 @@ include_directories(
 
 SET(fmps_DATA_DIR "${CMAKE_SOURCE_DIR}/data")
 set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/data.S
-  PROPERTIES OBJECT_DEPENDS "${fmps_DATA_DIR}/VERSION;${fmps_DATA_DIR}/VERSION_TEMPLATE;${fmps_DATA_DIR}/VERSION_TEMPLATE_DEV")
+  PROPERTIES OBJECT_DEPENDS "${fmps_DATA_DIR}/VERSION;${fmps_DATA_DIR}/VERSION_TEMPLATE;${fmps_DATA_DIR}/VERSION_TEMPLATE_DEV;${fmps_DATA_DIR}/PROGRAM_DESCRIPTION")
 
-add_library (fmpspart SHARED ${fmps_SOURCES})
+add_library (fmpspart STATIC ${fmps_SOURCES})
 
 add_executable (fmps ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp)
 target_link_libraries (fmps fmpspart)
