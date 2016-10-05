@@ -63,7 +63,7 @@ else
   BRANCH="${CI_BUILD_REF_NAME##*/}"
 fi
 
-if [[ $BRANCH == release* ]] || [[ $BRANCH == "master" ]]
+if [[ $BRANCH == release* ]] || [[ $BRANCH == "releases" ]]
 then
   ON_RELEASE_BRANCH="true"
 else

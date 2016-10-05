@@ -31,11 +31,11 @@ void Rule::set(int x1, int y1, int x2, int y2, bool greater) {
 
 bool Rule::check(vector<vector<int>> matrix) const {
   if (num) {
-    return diff == abs(matrix[x1][y1] - matrix[x2][y2]);
+    return (diff == (abs(matrix[x1][y1] - matrix[x2][y2])));
   } else if(greater) {
-    return matrix[x1][y1] > matrix[x2][y2];
+    return (matrix[x1][y1] > matrix[x2][y2]);
   } else {
-    return matrix[x1][y1] < matrix[x2][y2];
+    return (matrix[x1][y1] < matrix[x2][y2]);
   }
 }
 
@@ -58,5 +58,21 @@ string Rule::to_string() const {
   ss << "Box 1: (" << x1 << "," << y1 << ")" << endl;
   ss << "Box 2: (" << x2 << "," << y2 << ")" << endl;
   return ss.str();
+}
+
+float Rule::xpos() const {
+  return ((x1 + x2) / 2.0);
+}
+
+float Rule::ypos() const {
+  return ((y1 + y2) / 2.0);
+}
+
+string Rule::rule() const {
+  if (num) {
+    return std::to_string(diff);
+  } else {
+    return (greater ? ">" : "<");
+  }
 }
 

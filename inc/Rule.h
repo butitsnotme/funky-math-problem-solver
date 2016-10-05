@@ -14,6 +14,9 @@ public:
   bool check(std::vector<std::vector<int>> matrix) const;
   bool valid(int x, int y, int sx, int sy) const;
   std::string to_string() const;
+  float xpos() const;
+  float ypos() const;
+  std::string rule() const;
 private:
   bool num;
   int diff;
