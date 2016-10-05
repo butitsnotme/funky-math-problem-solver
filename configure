@@ -129,7 +129,7 @@ if [[ "true" == $GLOBAL_INSTALL ]]
 then
   OPTIONS="$OPTIONS -DCMAKE_INSTALL_PREFIX=/usr/local"
 else
-  OPTIONS="$OPTIONS -DCMAKE_INSTALL_PREFIX=`pwd`/install"
+  OPTIONS="$OPTIONS -DCMAKE_INSTALL_PREFIX=`pwd`/target"
 fi
 
 if [[ "true" == $CLEAN ]]
