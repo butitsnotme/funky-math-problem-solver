@@ -7,4 +7,4 @@
 #else
   datafile version_temp     "../data/VERSION_TEMPLATE"
 #endif
-
+  datafile description      "../data/PROGRAM_DESCRIPTION"
