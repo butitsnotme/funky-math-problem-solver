@@ -41,18 +41,24 @@ bool Solver::step(int x, int y) {
 
   for (int i = 0; i < x; i++) {
     nums[matrix[i][y]] = false;
+  }
+
+  for (int i = 0; i < y; i++) {
     nums[matrix[x][i]] = false;
   }
 
   for (const auto item: nums) {
     if (item.second) {
       matrix[x][y] = item.first;
+      bool failed = false;
       for (const auto r: ruleset) {
         if (r.valid(x, y, size, size)) {
           if (!r.check(matrix)) {
-            continue;
+            failed = true;
           }
         }
+      }
+      if (!failed) {
         // Check if this is the last cell
         int max = size - 1;
         if (x == max && y == max) {
@@ -78,10 +84,32 @@ bool Solver::step(int x, int y) {
 }
 
 void Solver::print() const {
+  vector<vector<string>> display;
+  display.reserve(size*2);
+  for (int x = 0; x < size *2; x++) {
+    vector<string> v;
+    v.reserve(size*2);
+    for (int y = 0; y < size *2; y++) {
+      v.push_back(" ");
+    }
+    display.push_back(v);
+  }
+
   for (int y = 0; y < size; y++) {
     for (int x = 0; x < size; x++) {
-      cout << " " << matrix[x][y];
+      display[x*2][y*2] = std::to_string(matrix[x][y]);
+    }
+  }
+
+  for (const auto r: ruleset) {
+    display[r.xpos()*2][r.ypos()*2] = r.rule();
+  }
+
+  for (int y = 0; y < size*2; y++) {
+    for (int x = 0; x < size*2; x++) {
+      cout << display[x][y] << " ";
     }
     cout << endl;
   }
 }
+

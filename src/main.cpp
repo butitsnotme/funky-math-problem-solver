@@ -103,8 +103,11 @@ int main(int argc, char** argv) {
   cout << "Size: " << args::get(size) << endl;
 
   if (rules) {
+    cout << " Rule | x   | y" << endl;
+    cout << " ----------------" << endl;
     for (const auto r: args::get(rules)) {
-      cout << r << endl;
+      cout << " " << r.rule() << "    | " << r.xpos() << " | " << r.ypos()
+        << endl;
     }
   }
 
