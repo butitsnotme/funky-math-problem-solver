@@ -1,0 +1,71 @@
+image: ubuntu:16.04
+
+stages:
+  - build
+  - smoke_test
+  - test
+  - deploy
+
+build:
+  script:
+    - ./configure --auto
+    - cd build
+    - make -j4
+    - make install
+    - cd ..
+    - pwd
+    - find /usr/local/
+    - mkdir -p install/usr/
+    - cp -r /usr/local/ install/usr/
+  artifacts:
+    expire_in: 1 day
+    name: "${CI_BUILD_NAME}_${CI_BUILD_REF_NAME}"
+    paths:
+      - install/
+  stage: build
+  image: butitsnotme/build-env:latest
+  tags:
+    - docker
+
+smoke_test:
+  script:
+    - cp -r install/usr/local /usr/
+    - cd /usr/local/bin/
+    - ./fmps --help --version
+  stage: smoke_test
+  tags:
+    - docker
+
+unit_tests:
+  script:
+    - cp -r install/usr/local /usr/
+    - cd /usr/local/bin/
+    - ./unit_tests -s
+  tags:
+    - docker
+
+deploy_prod:
+  script:
+    - /bin/true
+  stage: deploy
+  environment: release
+  artifacts:
+    paths:
+      - install/*
+  only:
+    - releases
+  tags:
+    - docker
+
+deploy_stage:
+  script:
+    - /bin/true
+  stage: deploy
+  environment: pre-release
+  artifacts:
+    paths:
+      - install/*
+  only:
+    - release-*
+  tags:
+    - docker
