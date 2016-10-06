@@ -13,7 +13,7 @@ Solver::Solver(int size, vector<Rule> ruleset):
 Solver::~Solver() {
 }
 
-vector<vector<int>> Solver::solve() {
+void Solver::solve() {
   matrix.reserve(size);
   for (int x = 0; x < size; x++) {
     vector<int> ys;
@@ -24,13 +24,14 @@ vector<vector<int>> Solver::solve() {
     matrix.push_back(ys);
   }
 
-  if (step(0, 0)) {
+  step(0, 0);
+  if (!all && 0 < found) {
     cout << "Solution found" << endl;
+  } else if (0 < found) {
+    cout << found << " solutions found" << endl;
   } else {
-    cout << "No solution found" << endl;
+    cout << "No solutions found" << endl;
   }
-
-  return matrix;
 }
 
 bool Solver::step(int x, int y) {
@@ -63,7 +64,11 @@ bool Solver::step(int x, int y) {
         int max = size - 1;
         if (x == max && y == max) {
           // We have a valid solution
-          return true;
+          ++found;
+          print();
+          if (!all) {
+            return true;
+          }
         } else if (x == max) {
           // We are at the end of the row
           if (step(0, y + 1)) {
@@ -84,6 +89,10 @@ bool Solver::step(int x, int y) {
 }
 
 void Solver::print() const {
+  if (onlyCount) {
+    return;
+  }
+  cout << "Solution: " << found << endl;
   vector<vector<string>> display;
   display.reserve(size*2);
   for (int x = 0; x < size *2; x++) {
@@ -105,11 +114,19 @@ void Solver::print() const {
     display[r.xpos()*2][r.ypos()*2] = r.rule();
   }
 
-  for (int y = 0; y < size*2; y++) {
-    for (int x = 0; x < size*2; x++) {
+  for (int y = 0; y < (size*2 - 1); y++) {
+    for (int x = 0; x < (size*2 - 1); x++) {
       cout << display[x][y] << " ";
     }
     cout << endl;
   }
+}
+
+void Solver::findAll(bool all) {
+  this->all = all;
+}
+
+void Solver::countOnly(bool count) {
+  this->onlyCount = count;
 }
 
