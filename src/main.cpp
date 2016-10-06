@@ -1,3 +1,4 @@
+#include <iomanip>
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -55,6 +56,10 @@ int main(int argc, char** argv) {
   args::Flag version(p, "version", "Show the program version", {"version"});
   args::ValueFlag<int> size(p, "size", "Set the size of the grid",
       {'s', "size"}, 6);
+  args::Flag allSolutions(p, "all", "Find all solutions, not just the first",
+      {'a', "all"});
+  args::Flag countOnly(p, "count", "Only count the solutions, do not print them",
+      {'c', "count"});
   args::PositionalList<Rule, vector, RulesReader> rules(p, "rules",
       "The list of constraints/rules");
 
@@ -106,16 +111,27 @@ int main(int argc, char** argv) {
     cout << " Rule | x   | y" << endl;
     cout << " ----------------" << endl;
     for (const auto r: args::get(rules)) {
-      cout << " " << r.rule() << "    | " << r.xpos() << " | " << r.ypos()
-        << endl;
+      cout << " " << r.rule() << "    | " << setw(3) << r.xpos() << " | "
+        << setw(3) << r.ypos() << endl;
     }
+    cout << endl;
   }
 
   int nSize = args::get(size);
 
   Solver s(nSize, args::get(rules));
+
+  if (allSolutions) {
+    cout << "Finding all solutions\n" << endl;
+    s.findAll(true);
+  }
+
+  if (countOnly) {
+    cout << "Only counting solutions\n" << endl;
+    s.countOnly(true);
+  }
+
   s.solve();
-  s.print();
 
   return 0;
 
