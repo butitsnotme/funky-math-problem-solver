@@ -1,7 +1,8 @@
 #include "Solver.h"
 
-#include <map>
+#include <iomanip>
 #include <iostream>
+#include <map>
 
 using namespace std;
 
@@ -13,7 +14,7 @@ Solver::Solver(int size, vector<Rule> ruleset):
 Solver::~Solver() {
 }
 
-vector<vector<int>> Solver::solve() {
+void Solver::solve() {
   matrix.reserve(size);
   for (int x = 0; x < size; x++) {
     vector<int> ys;
@@ -24,13 +25,24 @@ vector<vector<int>> Solver::solve() {
     matrix.push_back(ys);
   }
 
-  if (step(0, 0)) {
+  start = chrono::steady_clock::now();
+  start_total = chrono::steady_clock::now();
+  step(0, 0);
+  if (!all && 0 < found) {
     cout << "Solution found" << endl;
+  } else if (0 < found) {
+    cout << found << " solutions found" << endl;
   } else {
-    cout << "No solution found" << endl;
+    cout << "No solutions found" << endl;
   }
 
-  return matrix;
+  if (metrics) {
+    chrono::steady_clock::time_point end = chrono::steady_clock::now();
+    cout << "Total duration: "
+      << chrono::duration_cast<chrono::seconds>(end - start_total).count()
+      << " seconds" << endl;
+    cout << "Total backtracks taken: " << backtracks_total << endl;
+  }
 }
 
 bool Solver::step(int x, int y) {
@@ -63,7 +75,11 @@ bool Solver::step(int x, int y) {
         int max = size - 1;
         if (x == max && y == max) {
           // We have a valid solution
-          return true;
+          ++found;
+          print();
+          if (!all) {
+            return true;
+          }
         } else if (x == max) {
           // We are at the end of the row
           if (step(0, y + 1)) {
@@ -80,10 +96,27 @@ bool Solver::step(int x, int y) {
 
   // We did not find a valid solution with our givens
   matrix[x][y] = 0;
+  ++backtracks;
   return false;
 }
 
-void Solver::print() const {
+void Solver::print() {
+  if (onlyCount) {
+    return;
+  }
+  cout << "Solution: " << found << endl;
+
+  if (metrics) {
+    chrono::steady_clock::time_point end = chrono::steady_clock::now();
+    cout << "Solution took "
+      << chrono::duration_cast<std::chrono::milliseconds>(end - start).count()
+      << " milliseconds to find." <<endl;
+    cout << "Took " << backtracks << " backtracks to find the solution" << endl;
+    backtracks_total += backtracks;
+    backtracks = 0;
+    start = chrono::steady_clock::now();
+  }
+
   vector<vector<string>> display;
   display.reserve(size*2);
   for (int x = 0; x < size *2; x++) {
@@ -105,11 +138,23 @@ void Solver::print() const {
     display[r.xpos()*2][r.ypos()*2] = r.rule();
   }
 
-  for (int y = 0; y < size*2; y++) {
-    for (int x = 0; x < size*2; x++) {
+  for (int y = 0; y < (size*2 - 1); y++) {
+    for (int x = 0; x < (size*2 - 1); x++) {
       cout << display[x][y] << " ";
     }
     cout << endl;
   }
+}
+
+void Solver::findAll(bool all) {
+  this->all = all;
+}
+
+void Solver::countOnly(bool count) {
+  this->onlyCount = count;
+}
+
+void Solver::enableMetrics(bool metrics) {
+  this->metrics = metrics;
 }
 
