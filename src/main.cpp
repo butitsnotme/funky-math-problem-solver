@@ -60,6 +60,8 @@ int main(int argc, char** argv) {
       {'a', "all"});
   args::Flag countOnly(p, "count", "Only count the solutions, do not print them",
       {'c', "count"});
+  args::Flag metrics(p, "metrics", "Output some metrics about the solution(s)",
+      {'m', "metrics"});
   args::PositionalList<Rule, vector, RulesReader> rules(p, "rules",
       "The list of constraints/rules");
 
@@ -129,6 +131,11 @@ int main(int argc, char** argv) {
   if (countOnly) {
     cout << "Only counting solutions\n" << endl;
     s.countOnly(true);
+  }
+
+  if (metrics) {
+    cout << "Metrics enabled\n" << endl;
+    s.enableMetrics(true);
   }
 
   s.solve();
