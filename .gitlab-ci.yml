@@ -8,7 +8,7 @@ stages:
 
 linux-build:
   script:
-    - ./configure --auto
+    - ./configure.sh --auto
     - cd build
     - make -j4
     - make install
@@ -29,7 +29,7 @@ linux-build:
 
 windows-build:
   script:
-    - configure --auto --windows
+    - configure.sh --auto --windows
     - cd build
     - ninja
     - ninja install
