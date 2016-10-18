@@ -6,7 +6,7 @@ stages:
   - test
   - deploy
 
-linux:build:
+linux-build:
   script:
     - ./configure --auto
     - cd build
@@ -27,7 +27,7 @@ linux:build:
   tags:
     - docker
 
-windows:build:
+windows-build:
   script:
     - configure --auto --windows
     - cd build
@@ -44,7 +44,7 @@ windows:build:
   tags:
     - windows
 
-linux:smoke_test:
+linux-smoke_test:
   script:
     - cp -r install/usr/local /usr/
     - cd /usr/local/bin/
@@ -53,9 +53,9 @@ linux:smoke_test:
   tags:
     - docker
   dependencies:
-    - linux:build
+    - linux-build
 
-windows:smoke_test:
+windows-smoke_test:
   script:
     - cmake -E copy_directory target "C:/Program Files/fmps"
     - cd "C:/Program Files/fmps/bin/"  
@@ -64,9 +64,9 @@ windows:smoke_test:
   tags:
     - windows
   dependencies:
-    - windows:build
+    - windows-build
 
-linux:unit_tests:
+linux-unit_tests:
   script:
     - cp -r install/usr/local /usr/
     - cd /usr/local/bin/
@@ -74,9 +74,9 @@ linux:unit_tests:
   tags:
     - docker
   dependencies:
-    - linux:build
+    - linux-build
 
-windows:unit_tests:
+windows-unit_tests:
   script:
     - cmake -E copy_directory target "C:/Program Files/fmps"
     - cd "C:/Program Files/fmps/bin/"
@@ -84,9 +84,9 @@ windows:unit_tests:
   tags:
     - windows
   dependencies:
-    - windows:build
+    - windows-build
 
-linux:deploy_prod:
+linux-deploy_prod:
   script:
     - /bin/true
   stage: deploy
@@ -99,9 +99,9 @@ linux:deploy_prod:
   tags:
     - docker
   dependencies:
-    - linux:build
+    - linux-build
 
-windows:deploy_prod:
+windows-deploy_prod:
   script:
     - rem
   stage: deploy
@@ -114,9 +114,9 @@ windows:deploy_prod:
   tags:
     - windows
   dependencies:
-    - windows:build
+    - windows-build
 
-linux:deploy_stage:
+linux-deploy_stage:
   script:
     - /bin/true
   stage: deploy
@@ -129,9 +129,9 @@ linux:deploy_stage:
   tags:
     - docker
   dependencies:
-    - linux:build
+    - linux-build
 
-windows:deploy_stage:
+windows-deploy_stage:
   script:
     - rem
   stage: deploy
@@ -144,4 +144,4 @@ windows:deploy_stage:
   tags:
     - windows
   dependencies:
-    - windows:build
+    - windows-build
