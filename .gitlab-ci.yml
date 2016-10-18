@@ -105,7 +105,7 @@ windows-deploy_prod:
   script:
     - rem
   stage: deploy
-  environment: release:windows
+  environment: release-windows
   artifacts:
     paths:
       - target/*
@@ -135,7 +135,7 @@ windows-deploy_stage:
   script:
     - rem
   stage: deploy
-  environment: pre-release
+  environment: pre-release-windows
   artifacts:
     paths:
       - target/*
