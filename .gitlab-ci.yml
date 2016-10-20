@@ -6,9 +6,9 @@ stages:
   - test
   - deploy
 
-build:
+linux-build:
   script:
-    - ./configure --auto
+    - ./configure.sh --auto
     - cd build
     - make -j4
     - make install
@@ -27,7 +27,23 @@ build:
   tags:
     - docker
 
-smoke_test:
+windows-build:
+  script:
+    - configure.sh --auto --windows
+    - cd build
+    - ninja
+    - ninja install
+    - cd ..
+  artifacts:
+    expire_in: 1 day
+    name: "${CI_BUILD_NAME}_${CI_BUILD_REF_NAME}"
+    paths:
+      - target/
+  stage: build
+  tags:
+    - windows
+
+linux-smoke_test:
   script:
     - cp -r install/usr/local /usr/
     - cd /usr/local/bin/
@@ -35,16 +51,39 @@ smoke_test:
   stage: smoke_test
   tags:
     - docker
+  dependencies:
+    - linux-build
 
-unit_tests:
+windows-smoke_test:
+  script:
+    - cd target/bin
+    - fmps.exe --help --version
+  stage: smoke_test
+  tags:
+    - windows
+  dependencies:
+    - windows-build
+
+linux-unit_tests:
   script:
     - cp -r install/usr/local /usr/
     - cd /usr/local/bin/
     - ./unit_tests -s
   tags:
     - docker
+  dependencies:
+    - linux-build
 
-deploy_prod:
+windows-unit_tests:
+  script:
+    - cd target/bin
+    - unit_tests.exe -s
+  tags:
+    - windows
+  dependencies:
+    - windows-build
+
+linux-deploy_prod:
   script:
     - /bin/true
   stage: deploy
@@ -56,8 +95,25 @@ deploy_prod:
     - releases
   tags:
     - docker
+  dependencies:
+    - linux-build
 
-deploy_stage:
+windows-deploy_prod:
+  script:
+    - rem
+  stage: deploy
+  environment: release-windows
+  artifacts:
+    paths:
+      - target/*
+  only:
+    - releases
+  tags:
+    - windows
+  dependencies:
+    - windows-build
+
+linux-deploy_stage:
   script:
     - /bin/true
   stage: deploy
@@ -69,3 +125,20 @@ deploy_stage:
     - release-*
   tags:
     - docker
+  dependencies:
+    - linux-build
+
+windows-deploy_stage:
+  script:
+    - rem
+  stage: deploy
+  environment: pre-release-windows
+  artifacts:
+    paths:
+      - target/*
+  only:
+    - release-*
+  tags:
+    - windows
+  dependencies:
+    - windows-build
