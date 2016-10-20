@@ -132,9 +132,6 @@ fi
 if [[ "true" == $GLOBAL_INSTALL ]] && [[ "false" == $WINDOWS ]]
 then
   OPTIONS="$OPTIONS -DCMAKE_INSTALL_PREFIX=/usr/local"
-elif [[ "true" == $GLOBAL_INSTALL ]] && [[ "true" == $WINDOWS ]]
-then
-  OPTIONS="$OPTIONS -DCMAKE_INSTALL_PREFIX=/Program\\ Files/fmps"
 else
   OPTIONS="$OPTIONS -DCMAKE_INSTALL_PREFIX=`pwd`/target"
 fi

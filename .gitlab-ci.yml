@@ -34,7 +34,6 @@ windows-build:
     - ninja
     - ninja install
     - cd ..
-    - cmake -E copy_directory "C:\\Program Files\\fmps" target
   artifacts:
     expire_in: 1 day
     name: "${CI_BUILD_NAME}_${CI_BUILD_REF_NAME}"
@@ -57,8 +56,7 @@ linux-smoke_test:
 
 windows-smoke_test:
   script:
-    - cmake -E copy_directory target "C:/Program Files/fmps"
-    - cd "C:/Program Files/fmps/bin/"  
+    - cd target
     - fmps.exe --help --version
   stage: smoke_test
   tags:
@@ -78,8 +76,7 @@ linux-unit_tests:
 
 windows-unit_tests:
   script:
-    - cmake -E copy_directory target "C:/Program Files/fmps"
-    - cd "C:/Program Files/fmps/bin/"
+    - cd target
     - unit_tests.exe -s
   tags:
     - windows
