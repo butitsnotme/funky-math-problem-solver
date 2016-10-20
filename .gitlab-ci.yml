@@ -56,7 +56,7 @@ linux-smoke_test:
 
 windows-smoke_test:
   script:
-    - cd target
+    - cd target/bin
     - fmps.exe --help --version
   stage: smoke_test
   tags:
@@ -76,7 +76,7 @@ linux-unit_tests:
 
 windows-unit_tests:
   script:
-    - cd target
+    - cd target/bin
     - unit_tests.exe -s
   tags:
     - windows
